@@ -81,39 +81,6 @@ def set_servo_angle():
             "reason": "not satisfied with url parameter"
         }
     return json.dumps(response)
-#
-# @app.route("/servo")
-# def set_servo_angle():
-#     # e.g. http://<rpi-ip>:<port>/servo?angle=90
-#     # e.g. http://<rpi-ip>:<port>/servo?duty_cycle=7
-#     angle = request.args.get('angle', type=float)
-#     duty_cycle = angle_to_duty_cycle(angle)
-#
-#     if duty_cycle is None:
-#         response: dict = {
-# 	    "angle": angle,
-# 	    "duty_cycle": duty_cycle,
-# 	    "status": 400
-#         }
-#     else:
-#         GPIO.output(SERVO_PIN, True)
-#         pwm.ChangeDutyCycle(duty_cycle)
-#
-#         sleep(1)  # give time for servo to turn
-#
-#         # turn off pwm to stop buzzing
-#         # buzzing might go away if we
-#         # use a diff power source for the motor
-#         GPIO.output(SERVO_PIN, False)
-#         pwm.ChangeDutyCycle(0)
-#
-#         response: dict = {
-# 	    "angle": angle,
-# 	    "duty_cycle": duty_cycle,
-# 	    "status": 200
-#         }
-#
-#     return json.dumps(response)
 
 
 if __name__ == "__main__":
