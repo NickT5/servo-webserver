@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import json
 from time import sleep
 import RPi.GPIO as GPIO
@@ -9,6 +11,8 @@ app = Flask(__name__)
 def angle_to_duty_cycle(angle: float) -> float:
     """
     convert angle to duty cycle
+    Works with servo motor Tower Pro SG92R.
+    Works not with servo motor Tower Pro SG90
     """
     try:
         dc = (1.0/18.0 * angle) + 2
@@ -43,16 +47,7 @@ def set_duty_cycle(duty_cycle: float) -> dict:
             "reason": "duty cycle is None"
         }
     else:
-        GPIO.output(SERVO_PIN, True)
         pwm.ChangeDutyCycle(duty_cycle)
-
-        sleep(1)  # give time for servo to turn
-
-        # turn off pwm to stop buzzing
-        # buzzing might go away if we
-        # use a diff power source for the motor
-        GPIO.output(SERVO_PIN, False)
-        pwm.ChangeDutyCycle(0)
 
         response: dict = {
             "duty_cycle": duty_cycle,
