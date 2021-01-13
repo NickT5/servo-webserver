@@ -1,8 +1,9 @@
 #! /usr/bin/python3
 
+# tip : command pinout gives the pinout of the raspberry pi
 import json
 from time import sleep
-import RPi.GPIO as GPIO
+import pigpio
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -47,7 +48,9 @@ def set_duty_cycle(duty_cycle: float) -> dict:
             "reason": "duty cycle is None"
         }
     else:
-        pwm.ChangeDutyCycle(duty_cycle)
+        frequency = 50
+        duty_cycle = int(duty_cycle)
+        pi.hardware_PWM(SERVO_PIN, frequency, duty_cycle)
 
         response: dict = {
             "duty_cycle": duty_cycle,
@@ -80,18 +83,15 @@ def set_servo_angle():
 
 if __name__ == "__main__":
     # setup gpio pin for servo
-    GPIO.setmode(GPIO.BOARD)
-    SERVO_PIN = 3
-    GPIO.setup(SERVO_PIN, GPIO.OUT)
-    # setup pwm for servo
-    FREQUENCY = 50
-    pwm = GPIO.PWM(SERVO_PIN, FREQUENCY)
-    pwm.start(0)
+    pi = pigpio.pi()
+    SERVO_PIN = 18  # BCM pin layout. Not BOARD pin layout
+    pi.set_mode(SERVO_PIN, pigpio.ALT5)
+
     # setup server
     PORT = 5001
     print(f"Server is listening on port {PORT}")
     app.run(debug=True, host="0.0.0.0", port=PORT)
 
     # tear down
-    pwm.stop()
-    GPIO.cleanup()
+    pi.write(SERVO_PIN, 0)
+    pi.stop()
